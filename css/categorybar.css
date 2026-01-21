@@ -56,8 +56,20 @@ span.categoryBar-list-count {
     font-size: 20px !important;
 }
 span.categoryBar-list-count::before {
-    content: '\f02d' !important;
-    padding-right: 15px !important;
+    /*content: '\f02d' !important;*/
+    content: '共' !important;
+    /*padding-right: 15px !important;*/
+    display: inline-block;
+    font-weight: 600;
+    font-style: normal;
+    font-variant: normal;
+    font-family: 'Font Awesome 6 Free';
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+}
+span.categoryBar-list-count::after {
+    content: '篇' !important;
+    /*padding-right: 15px !important;*/
     display: inline-block;
     font-weight: 600;
     font-style: normal;
