@@ -1,0 +1,333 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>数据库大文本转Java对象 | Welcome to my home!</title><meta name="author" content="EnyooXu"><meta name="copyright" content="EnyooXu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="背景在Java实体类中有一个属性为lang，为支持多语言，如下： 1234567private Map&lt;String, MultiLanguageDTO&lt;String&gt;&gt; lang;public class MultiLanguageDTO&lt;T&gt; &#123;    protected T zh_CN;    protected T zh_TW;    prot">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据库大文本转Java对象">
+<meta property="og:url" content="http://example.com/2026/02/10/java/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%A4%A7%E6%96%87%E6%9C%AC%E8%BD%ACJava%E5%AF%B9%E8%B1%A1/index.html">
+<meta property="og:site_name" content="Welcome to my home!">
+<meta property="og:description" content="背景在Java实体类中有一个属性为lang，为支持多语言，如下： 1234567private Map&lt;String, MultiLanguageDTO&lt;String&gt;&gt; lang;public class MultiLanguageDTO&lt;T&gt; &#123;    protected T zh_CN;    protected T zh_TW;    prot">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/java/other/other_3.png">
+<meta property="article:published_time" content="2026-02-10T03:33:00.000Z">
+<meta property="article:modified_time" content="2026-10-25T15:02:45.992Z">
+<meta property="article:author" content="EnyooXu">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="问题">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/java/other/other_3.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "数据库大文本转Java对象",
+  "url": "http://example.com/2026/02/10/java/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%A4%A7%E6%96%87%E6%9C%AC%E8%BD%ACJava%E5%AF%B9%E8%B1%A1/",
+  "image": "http://example.com/img/java/other/other_3.png",
+  "datePublished": "2026-02-10T03:33:00.000Z",
+  "dateModified": "2026-10-25T15:02:45.992Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "EnyooXu",
+      "url": "http://example.com"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2026/02/10/java/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%A4%A7%E6%96%87%E6%9C%AC%E8%BD%ACJava%E5%AF%B9%E8%B1%A1/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4-b1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.7/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.json","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '数据库大文本转Java对象',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><!-- hexo injector head_end start --><link rel="stylesheet" href="/css/categorybar.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.1"></head><body><div class="bg-animation" id="web_bg" style="background-image: url(/img/page.png);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">35</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">23</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">11</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><!-- 这里我希望在主页中每条文章都显示一个图片，但是我不希望在文章页面显示该图片--><!-- - top_img = page.top_img || page.cover || theme.default_top_img--><header class="post-bg" id="page-header" style="background: transparent;"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Welcome to my home!</span></a><a class="nav-page-title" href="/"><span class="site-name">数据库大文本转Java对象</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">数据库大文本转Java对象</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-02-10T03:33:00.000Z" title="发表于 2026-02-10 11:33:00">2026-02-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-10-25T15:02:45.992Z" title="更新于 2026-10-25 23:02:45">2026-10-25</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/">Java</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>在Java实体类中有一个属性为lang，为支持多语言，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Map&lt;String, MultiLanguageDTO&lt;String&gt;&gt; lang;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MultiLanguageDTO</span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">protected</span> T zh_CN;</span><br><span class="line">    <span class="keyword">protected</span> T zh_TW;</span><br><span class="line">    <span class="keyword">protected</span> T en_US;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在MySQL数据库中该字段存储的实际为json字符串，是一个longtext类型定义如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"> lang</span><br><span class="line">longtext          <span class="keyword">null</span> comment <span class="string">&#x27;多语言&#x27;</span>,</span><br></pre></td></tr></table></figure>
+
+<p>真实数据如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;portalDesc&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;en_US&quot;</span><span class="punctuation">:</span> <span class="string">&quot;APAAS-移动ISV自动化测试门户&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;zh_CN&quot;</span><span class="punctuation">:</span> <span class="string">&quot;APAAS-移动ISV自动化测试门户&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;zh_TW&quot;</span><span class="punctuation">:</span> <span class="string">&quot;APAAS-移動ISV自動化測試門戶&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;en_US&quot;</span><span class="punctuation">:</span> <span class="string">&quot;APAAS-移动ISV自动化测试门户&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;zh_CN&quot;</span><span class="punctuation">:</span> <span class="string">&quot;APAAS-移动ISV自动化测试门户&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;zh_TW&quot;</span><span class="punctuation">:</span> <span class="string">&quot;APAAS-移動ISV自動化測試門戶&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>现在有一个需求是在查询数据库中的数据时，希望数据返回时lang字段为一个<code>Map&lt;String, MultiLanguageDTO&gt;</code>类型，如果不做任何配置，mybatis是无法做到的。</p>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@TableField(value = &quot;lang&quot;, typeHandler = MySqlMapHandler.class, jdbcType = JdbcType.LONGVARCHAR)</span></span><br><span class="line"><span class="keyword">private</span> Map&lt;String, MultiLanguageDTO&gt; lang;</span><br></pre></td></tr></table></figure>
+
+<p>对于TableField中属性做一个解释，</p>
+<h3 id="typeHandler"><a href="#typeHandler" class="headerlink" title="typeHandler"></a>typeHandler</h3><p>可以把他理解为Java 类型 和 JDBC 类型 之间的转换器。在默认情况下MyBatis&#x2F;MyBatis-Plus是不知道如何把 LONGTEXT 转成 Map，也不知道如何把 Map -&gt; LONGTEXT，有了这转换器以后，无论是在查询还是保存的时候，MyBatis&#x2F;MyBatis-Plus就知道如何将这两种类型转换，这里的MySqlMapHandler.class需要我们自己去定义。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MySqlLangHandler</span> <span class="keyword">extends</span> <span class="title class_">BaseTypeHandler</span>&lt;Map&lt;String, MultiLanguageDTO&lt;String&gt;&gt;&gt; &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setNonNullParameter</span><span class="params">(PreparedStatement ps, <span class="type">int</span> i, Map&lt;String, MultiLanguageDTO&lt;String&gt;&gt; parameter, JdbcType jdbcType)</span> <span class="keyword">throws</span> SQLException &#123;</span><br><span class="line">        ps.setString(i, JSONObject.toJSONString(parameter));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Map&lt;String, MultiLanguageDTO&lt;String&gt;&gt; <span class="title function_">getNullableResult</span><span class="params">(ResultSet rs, String columnName)</span> <span class="keyword">throws</span> SQLException &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">result</span> <span class="operator">=</span> rs.getString(columnName);</span><br><span class="line">        <span class="keyword">return</span> converter(result);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Map&lt;String, MultiLanguageDTO&lt;String&gt;&gt; <span class="title function_">getNullableResult</span><span class="params">(ResultSet rs, <span class="type">int</span> columnIndex)</span> <span class="keyword">throws</span> SQLException &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">result</span> <span class="operator">=</span> rs.getString(columnIndex);</span><br><span class="line">        <span class="keyword">return</span> converter(result);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Map&lt;String, MultiLanguageDTO&lt;String&gt;&gt; <span class="title function_">getNullableResult</span><span class="params">(CallableStatement cs, <span class="type">int</span> columnIndex)</span> <span class="keyword">throws</span> SQLException &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">result</span> <span class="operator">=</span> cs.getString(columnIndex);</span><br><span class="line">        <span class="keyword">return</span> converter(result);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Map&lt;String, MultiLanguageDTO&lt;String&gt;&gt; <span class="title function_">converter</span><span class="params">(String rs)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="literal">null</span> != rs) &#123;</span><br><span class="line">            <span class="keyword">return</span> JSON.parseObject(rs, <span class="keyword">new</span> <span class="title class_">TypeReference</span>&lt;&gt;() &#123;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> Map.of();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意这里需要重写四个方法，这里一次说明一下：</p>
+<ol>
+<li>setNonNullParameter<br>这个方法是往数据库写数据时调用的，比如说新增和更新。</li>
+</ol>
+<ul>
+<li>PreparedStatement ps:JDBC 的预编译对象。相当于<code>insert into xxx(lang) values(?)</code>中的?。我们要做的就是给这个 ? 赋值。</li>
+<li>int i：第几个参数。例如：<code>insert into user(name, lang) values(?, ?)</code>那么name 是 1, lang 是 2。</li>
+<li>parameter：真正的 Java 对象。也就是<code>private Map&lt;String, MultiLanguageDTO&gt; lang;</code>。</li>
+<li>jdbcType:数据库字段类型。这里一般是<code>JdbcType.LONGVARCHAR</code>。</li>
+</ul>
+<p>这个方法里面的写法基本上是固定的。</p>
+<ol start="2">
+<li><p>getNullableResult(ResultSet rs, String columnName)<br>其实下面这个三个方法都是读取数据库的时候调用的，通俗点讲就是怎样讲数据库中的longtext类型数据转成Java中的Map&lt;String, MultiLanguageDTO&gt;，这三个方法只是调用场景不同，实现的时候的逻辑是完全一样的。当前这个方法是通过列名读取时调用。例如：<code>select lang from user</code>,MyBatis 内部调用<code>rs.getString(&quot;lang&quot;)</code>。</p>
+</li>
+<li><p>getNullableResult(ResultSet rs, int columnIndex)<br>这是通过列下标读取时调用。例如：<code>select lang,name from user</code>，JDBC 内部：<code>rs.getString(1)</code>。这里：1 &#x3D;&gt; lang，2 &#x3D;&gt; name。<br>有这种方式取值的原因是MyBatis 有时按列名取，有时按下标取。具体会取决于：SQL解析方式、自动映射、性能优化、ResultMap配置等。</p>
+</li>
+<li><p>getNullableResult(CallableStatement cs, int columnIndex)<br>这是调用存储过程时使用。例如：<code>CALL test_procedure(?)</code>, 对应 JDBC：<code>CallableStatement</code>。一般项目几乎用不到 因为现在很少大量使用。</p>
+</li>
+</ol>
+<h3 id="jdbcType"><a href="#jdbcType" class="headerlink" title="jdbcType"></a>jdbcType</h3><p>这个属性是告诉 MyBatis 数据库中的 JDBC 类型是什么。有时候不写 jdbcType 也能运行。因为 MyBatis 很多时候能自动推断。例如：<code>String name</code>。数据库：<code>VARCHAR</code>,MyBatis 自动就知道怎么映射。但是对于复杂的Java对象映射，比如说本例中，他就无法自动识别了，所以这里一定要加上该属性。</p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a><a class="post-meta__tags" href="/tags/%E9%97%AE%E9%A2%98/">问题</a></div><div class="post-share"><div class="social-share" data-image="/../../img/java/other/other_3.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/02/10/java/%E4%BB%8E%E8%BF%87%E6%BB%A4%E5%99%A8%E4%B8%AD%E8%8E%B7%E5%8F%96%E8%AF%B7%E6%B1%82%E4%BD%93%E4%B8%AD%E7%9A%84%E5%86%85%E5%AE%B9/" title="从过滤器中获取请求体中的内容"><img class="cover" src="/../../img/java/other/other_1.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">从过滤器中获取请求体中的内容</div></div><div class="info-2"><div class="info-item-1">背景目前我们有一个自己的服务A，对应的页面是a,在其他服务中B，C中分别有按钮可以访问我们的a页面，但是B和C中发送请求的时候请求体有一点小区别，C服务向我们发送请求的时候需要在请求体中增加一个字段appVersion，请求体的格式为Content-Type: application/json。我的需求是当C服务带着请求体中含有appVersion字段的时候，我们的新增，查询等等的条件都要带上这个字段。目前，架构给出的方案是在请求接口时增加过滤器，将这个appVersion放到本地线程中，后面我们在使用的时候直接从本地线程中取就可以了。 解决方案使用请求头这种问题最简单的改法是直接在请求头中加入一个字段appVersion，如果请求是由B服务发出的那么就将appVersion设为空，如果是C服务发出的请求那么就将appVersion设为特定值。随后在后端中加入一个过滤器专门去处理这个字段，后端代码新增如下： 1234567891011121314151617@Componentpublic class AppVersionFilter extends OncePerRequest...</div></div></div></a><a class="pagination-related" href="/2026/02/10/java/%E6%97%A0%E6%B3%95%E4%BF%AE%E6%94%B9%E7%BC%96%E8%AF%91%E5%8C%85%E4%BB%A3%E7%A0%81%E7%9A%84%E6%83%85%E5%86%B5%E4%B8%8B%E6%80%8E%E6%A0%B7%E6%94%B9%E5%8F%98%E5%8F%82%E6%95%B0/" title="无法修改编译包代码的情况下怎样改变特定参数"><img class="cover" src="/../../img/java/other/other_7.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">无法修改编译包代码的情况下怎样改变特定参数</div></div><div class="info-2"><div class="info-item-1">问题背景在我的依赖包内有如下一个类 12345@Component@Datapublic class PreLoadData &#123;    Map&lt;String, String&gt; envUrl;&#125; 这个类的初始化方法如下： 123456789101112131415@Component@Slf4jpublic class ApplicationPostTask implements ApplicationRunner &#123;    @Autowired    private PreLoadData preLoadData;    @Autowired    private EnvService envService;    @Override    public void run(ApplicationArguments args) &#123;        Map&lt;String, String&gt; allEnvMap = envService.getAllEnvMap();        preLoadData.setEnvUrl(...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/02/10/java/%E4%BB%8E%E8%BF%87%E6%BB%A4%E5%99%A8%E4%B8%AD%E8%8E%B7%E5%8F%96%E8%AF%B7%E6%B1%82%E4%BD%93%E4%B8%AD%E7%9A%84%E5%86%85%E5%AE%B9/" title="从过滤器中获取请求体中的内容"><img class="cover" src="/../../img/java/other/other_1.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-10</div><div class="info-item-2">从过滤器中获取请求体中的内容</div></div><div class="info-2"><div class="info-item-1">背景目前我们有一个自己的服务A，对应的页面是a,在其他服务中B，C中分别有按钮可以访问我们的a页面，但是B和C中发送请求的时候请求体有一点小区别，C服务向我们发送请求的时候需要在请求体中增加一个字段appVersion，请求体的格式为Content-Type: application/json。我的需求是当C服务带着请求体中含有appVersion字段的时候，我们的新增，查询等等的条件都要带上这个字段。目前，架构给出的方案是在请求接口时增加过滤器，将这个appVersion放到本地线程中，后面我们在使用的时候直接从本地线程中取就可以了。 解决方案使用请求头这种问题最简单的改法是直接在请求头中加入一个字段appVersion，如果请求是由B服务发出的那么就将appVersion设为空，如果是C服务发出的请求那么就将appVersion设为特定值。随后在后端中加入一个过滤器专门去处理这个字段，后端代码新增如下： 1234567891011121314151617@Componentpublic class AppVersionFilter extends OncePerRequest...</div></div></div></a><a class="pagination-related" href="/2026/02/10/mysql/mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%97%A0%E6%B3%95%E4%BD%BF%E7%94%A8%20=%20null/" title="Mysql使用 &#x3D; null无法查出结果问题"><img class="cover" src="/../../img/mysql/other/other_0.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-10</div><div class="info-item-2">Mysql使用 &#x3D; null无法查出结果问题</div></div><div class="info-2"><div class="info-item-1">问题背景：以下为查询代码： 1234567public List&lt;PortalInfo&gt; getExistPortal(Long portalId, String dataVersion) &#123;    Wrapper&lt;PortalInfo&gt; queryWrapper = Wrappers.lambdaQuery(PortalInfo.class)            .eq(PortalInfo::getDesignerId, portalId)            .eq(PortalInfo::getDataVersion, dataVersion);    return list(queryWrapper);&#125;  问题分析：因为本次查询很特殊，dataVersion 这个值为null,当时我的库里面是有一条数据其portalId和带查询的条件相同，dataVersion为null。实际上上述查询对应的sql是： 1select * from xxx where portalId = aaa and data_version = ...</div></div></div></a><a class="pagination-related" href="/2026/02/10/spring/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96/" title="Spring中如何解决循环依赖"><img class="cover" src="/../../img/spring/spring_1.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-10</div><div class="info-item-2">Spring中如何解决循环依赖</div></div><div class="info-2"><div class="info-item-1">什么是循环依赖循环依赖（Circular Dependency），简单来说，就是两个或多个组件之间相互依赖，形成了一个闭合的环状关系。常见的循环依赖如下： 123456789// 类 A 依赖 Bpublic class ClassA &#123;    private ClassB classB;&#125;// 类 B 依赖 Apublic class ClassB &#123;    private ClassA classA;&#125;  当然，这是最简单的循环依赖，实际上还有跟为复杂的例如：A→B→C→A。 解决方法三级缓存</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">EnyooXu</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">35</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">23</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">11</div></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="toc-number">2.</span> <span class="toc-text">解决方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#typeHandler"><span class="toc-number">2.1.</span> <span class="toc-text">typeHandler</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jdbcType"><span class="toc-number">2.2.</span> <span class="toc-text">jdbcType</span></a></li></ol></li></ol></div></div></div></div></main><footer id="footer" style="background: transparent;"><div class="footer-other"><div class="footer-copyright"></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4-b1"></script><script src="/js/main.js?v=5.5.4-b1"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.7/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5.2.0/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const config = mermaidSrc.dataset.config ? JSON.parse(mermaidSrc.dataset.config) : {}
+      if (!config.theme) {
+        config.theme = theme
+      }
+      const mermaidThemeConfig = `%%{init: ${JSON.stringify(config)}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      // mermaid v9 and v10 compatibility
+      typeof renderFn === 'string' ? renderMermaid(renderFn) : renderFn.then(({ svg }) => renderMermaid(svg))
+    })
+  }
+
+  const codeToMermaid = () => {
+    const codeMermaidEle = document.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    if (false) codeToMermaid()
+    const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid@11.12.2/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const commentCount = n => {
+    const isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+    if (isCommentCount) {
+      isCommentCount.textContent= n
+    }
+  }
+
+  const initGitalk = (el, path) => {
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGitalk = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+
+    const gitalk = new Gitalk({
+      clientID: '',
+      clientSecret: '',
+      repo: '',
+      owner: '',
+      admin: [''],
+      updateCountCallback: commentCount,
+      ...option,
+      id: isShuoshuo ? path : (option && option.id) || '4d3a96d78bfdc45dbd01f511b5a82b68'
+    })
+
+    gitalk.render('gitalk-container')
+  }
+
+  const loadGitalk = async(el, path) => {
+    if (typeof Gitalk === 'function') initGitalk(el, path)
+    else {
+      await btf.getCSS('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.css')
+      await btf.getScript('https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js')
+      initGitalk(el, path)
+    }
+  }
+
+  if (isShuoshuo) {
+    'Gitalk' === 'Gitalk'
+      ? window.shuoshuoComment = { loadComment: loadGitalk }
+      : window.loadOtherComment = loadGitalk
+    return
+  }
+
+  if ('Gitalk' === 'Gitalk' || !false) {
+    if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+    else loadGitalk()
+  } else {
+    window.loadOtherComment = loadGitalk
+  }
+})()</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/metingjs/dist/Meting.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.4-b1"></script></div></div><!-- hexo injector body_end start --><script data-pjax>
+  function butterfly_categories_card_injector_config(){
+    // 检查容器是否存在
+    var parent_div_git = document.getElementById('recent-posts');
+    // 如果容器不存在，则动态创建
+    if (!parent_div_git) {
+      console.warn('butterfly_categories_card: 挂载容器不存在，正在动态创建...');
+      // 创建新容器（默认插入到页面主体顶部）
+      parent_div_git = document.createElement('div');
+      parent_div_git.id = 'recent-posts'; // 赋予配置的ID
+      document.querySelector('#page').prepend(parent_div_git); // 插入到 #content-inner 内
+    }
+    var item_html = '<style>li.categoryBar-list-item{width:32.3%;}.categoryBar-list{max-height: 570px;overflow:auto;}.categoryBar-list::-webkit-scrollbar{width:0!important}@media screen and (max-width: 650px){.categoryBar-list{max-height: 480px;}}</style><div class="recent-post-item" style="height:auto;width:100%;padding:0px;"><div id="categoryBar"><ul class="categoryBar-list"><li class="categoryBar-list-item" style="background:url(/img/categories/error.png);"><a class="categoryBar-list-link" href="/categories/IDEA配置/">IDEA配置</a><span class="categoryBar-list-count">6</span><span class="categoryBar-list-descr"></span></li><li class="categoryBar-list-item" style="background:url(/img/categories/study.png);"><a class="categoryBar-list-link" href="/categories/Java/">Java</a><span class="categoryBar-list-count">10</span><span class="categoryBar-list-descr"></span></li><li class="categoryBar-list-item" style="background:url(/img/categories/idea.png);"><a class="categoryBar-list-link" href="/categories/错误汇总/">错误汇总</a><span class="categoryBar-list-count">5</span><span class="categoryBar-list-descr"></span></li><li class="categoryBar-list-item" style="background:url(https://npm.elemecdn.com/akilar-candyassets/image/cover4.webp);"><a class="categoryBar-list-link" href="/categories/Kafka/">Kafka</a><span class="categoryBar-list-count">2</span><span class="categoryBar-list-descr">个人日记</span></li><li class="categoryBar-list-item" style="background:url(https://npm.elemecdn.com/akilar-candyassets/image/cover5.webp);"><a class="categoryBar-list-link" href="/categories/JVM/">JVM</a><span class="categoryBar-list-count">3</span><span class="categoryBar-list-descr">诗词歌赋</span></li><li class="categoryBar-list-item" style="background:url(https://npm.elemecdn.com/akilar-candyassets/image/cover6.webp);"><a class="categoryBar-list-link" href="/categories/Linux/">Linux</a><span class="categoryBar-list-count">1</span><span class="categoryBar-list-descr">杂谈教程</span></li><li class="categoryBar-list-item" style="background:url(undefined);"><a class="categoryBar-list-link" href="/categories/Lombok/">Lombok</a><span class="categoryBar-list-count">1</span><span class="categoryBar-list-descr"></span></li><li class="categoryBar-list-item" style="background:url(undefined);"><a class="categoryBar-list-link" href="/categories/学习/">学习</a><span class="categoryBar-list-count">1</span><span class="categoryBar-list-descr"></span></li><li class="categoryBar-list-item" style="background:url(undefined);"><a class="categoryBar-list-link" href="/categories/Redis/">Redis</a><span class="categoryBar-list-count">1</span><span class="categoryBar-list-descr"></span></li><li class="categoryBar-list-item" style="background:url(undefined);"><a class="categoryBar-list-link" href="/categories/Mysql/">Mysql</a><span class="categoryBar-list-count">4</span><span class="categoryBar-list-descr"></span></li><li class="categoryBar-list-item" style="background:url(undefined);"><a class="categoryBar-list-link" href="/categories/Spring/">Spring</a><span class="categoryBar-list-count">1</span><span class="categoryBar-list-descr"></span></li></ul></div></div>';
+    console.log('已挂载 butterfly_categories_card');
+    parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+  }
+  // 路径匹配逻辑（使用 startsWith）
+  if (location.pathname.startsWith('/categories/') || '/categories/' === 'all') {
+    butterfly_categories_card_injector_config();
+  }
+  </script><!-- hexo injector body_end end --></body></html>
